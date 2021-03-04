@@ -4,10 +4,9 @@ import { StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import CreatePlusButton from './src/components/create-plus-button/create-plus-button';
 import CreateIntentionPopup from './src/components/create-intention-popup/create-intention-popup';
 import EditIntentionPopup from './src/components/edit-intention-popup/edit-intention-popup';
-import { MMKV } from 'react-native-mmkv';
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import PushNotification from "react-native-push-notification";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class App extends React.Component {
 
@@ -17,18 +16,39 @@ export default class App extends React.Component {
     activeCategory: false,
     activeIntentionObject: false,
     activeTimePeriodObject: ''
-     };
+  };
 
-  createIntention = intentionObject => this.setState({intentionsArray: [...this.state.intentionsArray, intentionObject], isCreating: false})
-  updateIntention = updatedIntentionObject => {this.setState({activeIntentionObject: false, intentionsArray: [...this.state.intentionsArray.filter(intentionObject => intentionObject.id !== updatedIntentionObject.id), updatedIntentionObject]})}
-  deleteIntention = () => this.setState({intentionsArray: this.state.intentionsArray.filter(intentionObject => this.state.activeIntentionObject !== intentionObject), activeIntentionObject: false})
-  
-  
+  createIntention = intentionObject => {
+    var newIntentionsArray = [...this.state.intentionsArray, intentionObject];
+    this.setState({intentionsArray: newIntentionsArray, isCreating: false});
+    AsyncStorage.setItem('intentionsArrayString', JSON.stringify(newIntentionsArray))
+  };
+
+  updateIntention = updatedIntentionObject => {
+    var newIntentionsArray = [...this.state.intentionsArray.filter(intentionObject => intentionObject.id !== updatedIntentionObject.id), updatedIntentionObject];
+    this.setState({activeIntentionObject: false, intentionsArray: newIntentionsArray});
+    AsyncStorage.setItem('intentionsArrayString', JSON.stringify(newIntentionsArray));
+  };
+
+  deleteIntention = () => {
+    var newIntentionsArray = this.state.intentionsArray.filter(intentionObject => this.state.activeIntentionObject !== intentionObject)
+    this.setState({intentionsArray: newIntentionsArray, activeIntentionObject: false});
+    AsyncStorage.setItem('intentionsArrayString', JSON.stringify(newIntentionsArray));
+  };
+
+  async componentDidMount() {
+    var intentionsArrayString = await AsyncStorage.getItem('intentionsArrayString');
+    if (intentionsArrayString) {
+       var intentionsArray = JSON.parse(intentionsArrayString);
+       this.setState({intentionsArray: intentionsArray});
+    };
+  };
+
   render() {
 
     // console.log(this.state)
-    // console.log(this.state.intentionsArray)
-    console.log(this.state.activeIntentionObject)
+    console.log(this.state.intentionsArray)
+    // console.log(this.state.activeIntentionObject)
   
     PushNotification.localNotificationSchedule({
       //... You can use all the options from localNotifications
@@ -37,12 +57,15 @@ export default class App extends React.Component {
       allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
     });
 
+
+
     var timePeriodsArray = [
       {key: 'daily', title: 'Daily', message: 'Today, I want to...'}, 
       {key: 'weekly', title: 'Weekly', message: 'This week, I want to...'}, 
       {key: 'longTerm', title: 'Long term', message: 'Long term, I want to...'}
     ];
 
+    
     return (
       <View>
           <View style = {styles.headerView}>
@@ -107,7 +130,7 @@ const styles = StyleSheet.create({
 
     // timePeriodBox: {
     //   borderRadius: 10
-    // }, 
+    // },  
 
     timePeriodTitle: {
       paddingTop: 6,

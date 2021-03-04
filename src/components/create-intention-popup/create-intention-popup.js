@@ -6,6 +6,7 @@ import styles from './create-intention-popup.styles';
 import CreatePlusButton from '../create-plus-button/create-plus-button';
 import Popup from '../popup'
 
+
 var categories = {
   daily: {
     sleep: {title: 'Sleep', intentionTitles: ['Get to bed early', 'Stop eating three hours before bed', 'Meditate before bed']},
