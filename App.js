@@ -4,9 +4,18 @@ import { StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import CreatePlusButton from './src/components/create-plus-button/create-plus-button';
 import CreateIntentionPopup from './src/components/create-intention-popup/create-intention-popup';
 import EditIntentionPopup from './src/components/edit-intention-popup/edit-intention-popup';
-import PushNotificationIOS from "@react-native-community/push-notification-ios";
-import PushNotification from "react-native-push-notification";
+import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => ({
+//     shouldShowAlert: true,
+//     shouldPlaySound: false,
+//     shouldSetBadge: false,
+//   }),
+// });
+
 
 export default class App extends React.Component {
 
@@ -42,22 +51,34 @@ export default class App extends React.Component {
        var intentionsArray = JSON.parse(intentionsArrayString);
        this.setState({intentionsArray: intentionsArray});
     };
-  };
+    // this.schedulePushNotification()
+  }
+
+
+  // async schedulePushNotification() {
+  //   await Notifications.requestPermissionsAsync({
+  //     ios: {
+  //       allowAlert: true,
+  //       allowBadge: true,
+  //       allowSound: true,
+  //       allowAnnouncements: true,
+  //     },
+  //   });
+  //   await Notifications.scheduleNotificationAsync({
+  //     content: {
+  //       title: "You've got mail! 📬",
+  //       body: 'Here is the notification body',
+  //       data: { data: 'goes here' },
+  //     },
+  //     trigger: { seconds: 10 },
+  //   });
+  // }
 
   render() {
 
     // console.log(this.state)
     console.log(this.state.intentionsArray)
     // console.log(this.state.activeIntentionObject)
-  
-    PushNotification.localNotificationSchedule({
-      //... You can use all the options from localNotifications
-      message: "My Notification Message", // (required)
-      date: new Date(Date.now() + 1 * 1000), // in 60 secs
-      allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
-    });
-
-
 
     var timePeriodsArray = [
       {key: 'daily', title: 'Daily', message: 'Today, I want to...'}, 
@@ -78,9 +99,9 @@ export default class App extends React.Component {
                 <Text style = {styles.timePeriodTitle}>{timePeriodObject.title} intentions</Text>
               </View>
             <View style = {{flexDirection:'row'}}>
-              {/* <View styles = {styles.todayView}> */}
+
                 <Text style = {styles.timePeriodMessage}>{timePeriodObject.message}</Text>
-            {/* </View> */}
+
             
               <View style = {styles.plusButtonContainer}>
                 <CreatePlusButton onPress = {() => this.setState({isCreating: true, activeTimePeriodObject: timePeriodObject})}/>
@@ -90,7 +111,7 @@ export default class App extends React.Component {
             <View>
               {/* user created intentions */}
               {this.state.intentionsArray.filter(intentionObject => timePeriodObject.key === intentionObject.timePeriodKey).map(intentionObject => (
-                <TouchableOpacity onPress = {() => this.setState({activeIntentionObject: intentionObject, activeTimePeriodObject: timePeriodObject, id: _.uniqueId('intention') })} key= {intentionObject.title} style = {{paddingLeft: 75, paddingTop: 10}}>
+                <TouchableOpacity onPress = {() => this.setState({activeIntentionObject: intentionObject, activeTimePeriodObject: timePeriodObject, id: _.uniqueId('intention') })} key= {intentionObject.title} style = {styles.intentionTitleBox}>
                   <Text style = {styles.userIntentionTitle}>{intentionObject.title}</Text>
                 </TouchableOpacity>
               ))}
@@ -112,14 +133,15 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
 
     header: {
-        textTransform: 'uppercase',
-        fontWeight: 'bold',
-        fontSize: 20,
-        paddingTop: 55,
-        height: 100, 
-        color: '#202020',
+      textTransform: 'uppercase',
+      fontWeight: 'bold',
+      fontSize: 20,
+      paddingTop: 55,
+      height: 100, 
+      color: '#202020',
     },
 
+ 
     headerView: {
       borderBottomColor: 'black',
       borderBottomWidth: 1,
@@ -128,9 +150,19 @@ const styles = StyleSheet.create({
       justifyContent: 'center'
     },
 
-    // timePeriodBox: {
-    //   borderRadius: 10
-    // },  
+
+    timePeriodBox: {
+      borderRadius: 10,
+      overflow: 'hidden',
+      // width: '80%',
+      // alignItems: 'center',
+      // justifyContent: 'center',
+      // alignSelf: 'center',
+      // // backgroundColor: '#4B0082',
+      // height: 52,
+      // marginTop: 25,
+      // borderWidth: 1
+    },  
 
     timePeriodTitle: {
       paddingTop: 6,
@@ -144,7 +176,6 @@ const styles = StyleSheet.create({
       width: 140,
       marginTop: 25,
       marginLeft: 25,
-
     },
 
     timePeriodMessage: {
@@ -166,7 +197,7 @@ const styles = StyleSheet.create({
     plusButtonContainer: {
       paddingLeft: 10,
       paddingTop: 12,
-      width: 171,
+      // width: 171,
       
     },
 
@@ -180,7 +211,12 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         borderRadius: 10,
         borderColor: 'gray',
-        margin: 2
+        // marginLeft: 25
+      },
+
+      intentionTitleBox: {
+        paddingLeft: 75, 
+        paddingTop: 10
       }
 })
 
