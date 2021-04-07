@@ -4,9 +4,8 @@ import { StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import CreatePlusButton from './src/components/create-plus-button/create-plus-button';
 import CreateIntentionPopup from './src/components/create-intention-popup/create-intention-popup';
 import EditIntentionPopup from './src/components/edit-intention-popup/edit-intention-popup';
-import * as Notifications from 'expo-notifications';
+// import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 // Notifications.setNotificationHandler({
 //   handleNotification: async () => ({
@@ -15,7 +14,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //     shouldSetBadge: false,
 //   }),
 // });
-
 
 export default class App extends React.Component {
 
@@ -54,7 +52,6 @@ export default class App extends React.Component {
     // this.schedulePushNotification()
   }
 
-
   // async schedulePushNotification() {
   //   await Notifications.requestPermissionsAsync({
   //     ios: {
@@ -85,29 +82,28 @@ export default class App extends React.Component {
       {key: 'weekly', title: 'Weekly', message: 'This week, I want to...'}, 
       {key: 'longTerm', title: 'Long term', message: 'Long term, I want to...'}
     ];
-
     
     return (
       <View>
-          <View style = {styles.headerView}>
-            <Text style = {styles.header}>My intentions</Text>
-          </View>
 
-          {timePeriodsArray.map(timePeriodObject => (
-            <View>
-              <View style = {styles.timePeriodBox}>
-                <Text style = {styles.timePeriodTitle}>{timePeriodObject.title} intentions</Text>
-              </View>
-            <View style = {{flexDirection:'row'}}>
+        <View style = {styles.headerView}>
+          <Text style = {styles.header}>My intentions</Text>
+        </View>
 
-                <Text style = {styles.timePeriodMessage}>{timePeriodObject.message}</Text>
+        {timePeriodsArray.map(timePeriodObject => (
+          <View>
 
+            <View style = {styles.timePeriodBox}>
+              <Text style = {styles.timePeriodTitle}>{timePeriodObject.title} intentions</Text>
+            </View>
             
+            <View style = {{flexDirection:'row'}}>
+              <Text style = {styles.timePeriodMessage}>{timePeriodObject.message}</Text>
               <View style = {styles.plusButtonContainer}>
                 <CreatePlusButton onPress = {() => this.setState({isCreating: true, activeTimePeriodObject: timePeriodObject})}/>
               </View>
             </View>
-            
+          
             <View>
               {/* user created intentions */}
               {this.state.intentionsArray.filter(intentionObject => timePeriodObject.key === intentionObject.timePeriodKey).map(intentionObject => (
@@ -118,106 +114,93 @@ export default class App extends React.Component {
             </View>
 
             {this.state.activeIntentionObject &&(
-              <EditIntentionPopup activeIntentionObject = {this.state.activeIntentionObject} updateIntention = {this.updateIntention} deleteIntention = {this.deleteIntention} intentionsArray = {this.state.intentionsArray} activeTimePeriodObject = {this.state.activeTimePeriodObject} onClose = {() => this.setState({activeIntentionObject: false})} />)}
+              <EditIntentionPopup activeIntentionObject = {this.state.activeIntentionObject} updateIntention = {this.updateIntention} deleteIntention = {this.deleteIntention} intentionsArray = {this.state.intentionsArray} activeTimePeriodObject = {this.state.activeTimePeriodObject} onClose = {() => this.setState({activeIntentionObject: false})} />
+            )}
+
             {/* to show one of the three create intention popups */}
             {this.state.isCreating && this.state.activeTimePeriodObject.key === timePeriodObject.key && (
               <CreateIntentionPopup createIntention = {this.createIntention} onClose = {() => this.setState({isCreating: false})} timePeriodObject = {timePeriodObject}/> 
-         )}
-        </View>
-          ))}
+            )}
+
+          </View>
+
+        ))}
+
       </View>
-  );
+    );
   }
 }
 
 const styles = StyleSheet.create({
 
-    header: {
-      textTransform: 'uppercase',
-      fontWeight: 'bold',
-      fontSize: 20,
-      paddingTop: 55,
-      height: 100, 
-      color: '#202020',
-    },
+  header: {
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+    fontSize: 20,
+    paddingTop: 55,
+    height: 100, 
+    color: '#202020',
+  },
 
- 
-    headerView: {
-      borderBottomColor: 'black',
-      borderBottomWidth: 1,
-      backgroundColor: '#558155',
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
+  headerView: {
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    backgroundColor: '#558155',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
 
+  timePeriodBox: {
+    borderRadius: 10,
+    overflow: 'hidden',
+  },  
 
-    timePeriodBox: {
-      borderRadius: 10,
-      overflow: 'hidden',
-      // width: '80%',
-      // alignItems: 'center',
-      // justifyContent: 'center',
-      // alignSelf: 'center',
-      // // backgroundColor: '#4B0082',
-      // height: 52,
-      // marginTop: 25,
-      // borderWidth: 1
-    },  
+  timePeriodTitle: {
+    paddingTop: 6,
+    paddingBottom:6,
+    paddingLeft: 10,
+    paddingRight:8, 
+    fontSize: 16,
+    fontWeight: 'bold',
+    backgroundColor: 'black',
+    color: 'white',
+    width: 140,
+    marginTop: 25,
+    marginLeft: 25,
+  },
 
-    timePeriodTitle: {
-      paddingTop: 6,
-      paddingBottom:6,
-      paddingLeft: 10,
-      paddingRight:8, 
-      fontSize: 16,
-      fontWeight: 'bold',
-      backgroundColor: 'black',
-      color: 'white',
-      width: 140,
-      marginTop: 25,
-      marginLeft: 25,
-    },
+  timePeriodMessage: {
+    paddingLeft: 45,
+    paddingTop: 15,
+    fontSize: 16,
+    fontStyle: 'italic',
+    textDecorationLine: 'underline',
+    width: 171,   
+  },
 
-    timePeriodMessage: {
-      paddingLeft: 45,
-      paddingTop: 15,
-      fontSize: 16,
-      fontStyle: 'italic',
-      textDecorationLine: 'underline',
-      width: 171,
-      
-    },
+  plusButtonContainer: {
+    paddingLeft: 10,
+    paddingTop: 12,
+  },
 
-    // todayView: {
-    //   borderBottomWidth: 1,
-    //   borderBottomColor: 'black',
-    //   backgroundColor: 'red'
-    // },
+  userIntentionTitle: {
+    fontSize: 16,
+    paddingTop: 6,
+    paddingBottom: 6,
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderWidth: .5,
+    alignSelf: 'flex-start',
+    borderRadius: 10,
+    borderColor: 'gray',
+    // marginLeft: 25
+  },
 
-    plusButtonContainer: {
-      paddingLeft: 10,
-      paddingTop: 12,
-      // width: 171,
-      
-    },
+  intentionTitleBox: {
+    paddingLeft: 75, 
+    paddingTop: 10
+  }
 
-      userIntentionTitle: {
-        fontSize: 16,
-        paddingTop: 6,
-        paddingBottom: 6,
-        paddingLeft: 10,
-        paddingRight: 10,
-        borderWidth: .5,
-        alignSelf: 'flex-start',
-        borderRadius: 10,
-        borderColor: 'gray',
-        // marginLeft: 25
-      },
-
-      intentionTitleBox: {
-        paddingLeft: 75, 
-        paddingTop: 10
-      }
 })
 
 
