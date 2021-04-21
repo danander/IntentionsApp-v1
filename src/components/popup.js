@@ -6,20 +6,20 @@ export default class Popup extends React.Component {
 
   render() {
     return(
-  <Modal transparent style={styles.modal}>
-    <View style={styles.popup}>
-      <TouchableOpacity style={styles.popupBackground} onPress={this.props.onClose}/>
-      <View style={styles.popupWindow}>
-        {this.props.children}
-      </View>
-    </View>
-  </Modal>
-    )
+      <Modal transparent style={styles.modal}>
+        <View style={styles.popup}>
+          <TouchableOpacity style={styles.popupBackground} onPress={this.props.onClose}/>
+          <View style={styles.popupWindow}>
+            {this.props.children}
+          </View>
+        </View>
+      </Modal>
+    );
   }
 }
 
 var styles = {
-  
+
   popup: {
   flex: 1,
   height: '100%'
@@ -34,4 +34,4 @@ var styles = {
     height: 575,
     backgroundColor: 'white',
   },
-}
+};

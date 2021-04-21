@@ -7,7 +7,7 @@ export default function CreateTrashCan(props) {
     <TouchableOpacity onPress = {props.onPress}>
       <Ionicons name="trash" size={25} color="black" style = {styles.trashIcon}/>
     </TouchableOpacity>
-  )
+  );
 }
 
 var styles = {
@@ -16,4 +16,4 @@ var styles = {
     marginTop:25,
     marginRight: 25
   }
-}
+};

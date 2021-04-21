@@ -19,6 +19,6 @@ var styles = {
     borderRadius: 10,
     fontSize: 16
   },
-}
+};
 
 export default styles;

@@ -1,10 +1,10 @@
 import React from 'react';
 import _ from 'lodash';
-import {Text, View,TextInput, TouchableOpacity, Modal} from 'react-native';
+import {Text, View,TextInput, TouchableOpacity} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 import styles from './create-intention-popup.styles';
 import CreatePlusButton from '../create-plus-button/create-plus-button';
-import Popup from '../popup'
+import Popup from '../popup';
 
 var categories = {
   daily: {
@@ -44,7 +44,6 @@ export default class CreateIntentionPopup extends React.Component {
     return(
       <Popup onClose = {this.props.onClose}>
 
-        {/* back button appears when category is clicked*/}
         {this.state.activeCategory && (
           <TouchableOpacity onPress = {() => this.setState({activeCategory:undefined})} style = {styles.backButton}>
             <AntDesign name="leftcircleo" size={25} color="#915c83"/>
@@ -61,29 +60,33 @@ export default class CreateIntentionPopup extends React.Component {
           onSubmitEditing = {() => this.props.createIntention({title: this.state.createIntentionTitle, timePeriodKey: this.props.timePeriodObject.key, id: _.uniqueId('intention')})}
         />
 
-        {/* either categories show (second condition) or list of intentionTitles show (first condition*/}
         {this.state.activeCategory ? (
           <View style = {{paddingLeft: 20}}>
             {this.state.activeCategory.intentionTitles.map(intentionTitle => ( 
               <View style = {{flexDirection: 'row', margin: 8}}>
-                <CreatePlusButton onPress = {() => this.props.createIntention({title: intentionTitle, timePeriodKey: this.props.timePeriodObject.key, id: _.uniqueId('intention')})}/>
+                <CreatePlusButton onPress = {() => this.props.createIntention({
+                  title: intentionTitle, 
+                  timePeriodKey: this.props.timePeriodObject.key, 
+                  id: _.uniqueId('intention')
+                  })}
+                />
                 <TouchableOpacity style = {{marginLeft: 12, marginTop: 2}}>
                   <Text style = {{fontSize: 16}}>{intentionTitle}</Text>
                 </TouchableOpacity>
               </View>
             ))}
           </View> 
-          ) : (
-            categoryGroups.map((categoryGroup, index) => (
-              <View key = {index} style = {{flexDirection: 'row', flexWrap: 'wrap'}}>
-                {categoryGroup.map(category => (
-                  <TouchableOpacity key = {category.title} onPress={() => this.setState({activeCategory: category})} style = {{borderWidth: 1, flex: 1, height: 50, margin: 8, borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style ={{ fontSize: 16}}>{category.title}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-              ))
-          )
+        ) : (
+          categoryGroups.map((categoryGroup, index) => (
+            <View key = {index} style = {{flexDirection: 'row', flexWrap: 'wrap'}}>
+              {categoryGroup.map(category => (
+                <TouchableOpacity key = {category.title} onPress={() => this.setState({activeCategory: category})} style = {{borderWidth: 1, flex: 1, height: 50, margin: 8, borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}>
+                  <Text style ={{ fontSize: 16}}>{category.title}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ))
+        )
         }
       </Popup>
     );

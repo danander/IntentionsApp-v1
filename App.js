@@ -4,16 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import CreatePlusButton from './src/components/create-plus-button/create-plus-button';
 import CreateIntentionPopup from './src/components/create-intention-popup/create-intention-popup';
 import EditIntentionPopup from './src/components/edit-intention-popup/edit-intention-popup';
-// import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// Notifications.setNotificationHandler({
-//   handleNotification: async () => ({
-//     shouldShowAlert: true,
-//     shouldPlaySound: false,
-//     shouldSetBadge: false,
-//   }),
-// });
 
 export default class App extends React.Component {
 
@@ -28,7 +19,7 @@ export default class App extends React.Component {
   createIntention = intentionObject => {
     var newIntentionsArray = [...this.state.intentionsArray, intentionObject];
     this.setState({intentionsArray: newIntentionsArray, isCreating: false});
-    AsyncStorage.setItem('intentionsArrayString', JSON.stringify(newIntentionsArray))
+    AsyncStorage.setItem('intentionsArrayString', JSON.stringify(newIntentionsArray));
   };
 
   updateIntention = updatedIntentionObject => {
@@ -49,41 +40,17 @@ export default class App extends React.Component {
        var intentionsArray = JSON.parse(intentionsArrayString);
        this.setState({intentionsArray: intentionsArray});
     };
-    // this.schedulePushNotification()
   }
 
-  // async schedulePushNotification() {
-  //   await Notifications.requestPermissionsAsync({
-  //     ios: {
-  //       allowAlert: true,
-  //       allowBadge: true,
-  //       allowSound: true,
-  //       allowAnnouncements: true,
-  //     },
-  //   });
-  //   await Notifications.scheduleNotificationAsync({
-  //     content: {
-  //       title: "You've got mail! 📬",
-  //       body: 'Here is the notification body',
-  //       data: { data: 'goes here' },
-  //     },
-  //     trigger: { seconds: 10 },
-  //   });
-  // }
-
   render() {
-
-    // console.log(this.state)
-    console.log(this.state.intentionsArray)
-    // console.log(this.state.activeIntentionObject)
-
+  
     var timePeriodsArray = [
       {key: 'daily', title: 'Daily', message: 'Today, I want to...'}, 
       {key: 'weekly', title: 'Weekly', message: 'This week, I want to...'}, 
       {key: 'longTerm', title: 'Long term', message: 'Long term, I want to...'}
     ];
     
-    return (
+    return(
       <View>
 
         <View style = {styles.headerView}>
@@ -92,7 +59,6 @@ export default class App extends React.Component {
 
         {timePeriodsArray.map(timePeriodObject => (
           <View>
-
             <View style = {styles.timePeriodBox}>
               <Text style = {styles.timePeriodTitle}>{timePeriodObject.title} intentions</Text>
             </View>
@@ -105,27 +71,41 @@ export default class App extends React.Component {
             </View>
           
             <View>
-              {/* user created intentions */}
               {this.state.intentionsArray.filter(intentionObject => timePeriodObject.key === intentionObject.timePeriodKey).map(intentionObject => (
-                <TouchableOpacity onPress = {() => this.setState({activeIntentionObject: intentionObject, activeTimePeriodObject: timePeriodObject, id: _.uniqueId('intention') })} key= {intentionObject.title} style = {styles.intentionTitleBox}>
+                <TouchableOpacity 
+                  onPress = {() => this.setState({
+                    activeIntentionObject: intentionObject, 
+                    activeTimePeriodObject: timePeriodObject, 
+                    id: _.uniqueId('intention')
+                  })} 
+                  key= {intentionObject.title} 
+                  style = {styles.intentionTitleBox}
+                >
                   <Text style = {styles.userIntentionTitle}>{intentionObject.title}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             {this.state.activeIntentionObject &&(
-              <EditIntentionPopup activeIntentionObject = {this.state.activeIntentionObject} updateIntention = {this.updateIntention} deleteIntention = {this.deleteIntention} intentionsArray = {this.state.intentionsArray} activeTimePeriodObject = {this.state.activeTimePeriodObject} onClose = {() => this.setState({activeIntentionObject: false})} />
+              <EditIntentionPopup 
+                activeIntentionObject = {this.state.activeIntentionObject} 
+                updateIntention = {this.updateIntention} 
+                deleteIntention = {this.deleteIntention} 
+                intentionsArray = {this.state.intentionsArray} 
+                activeTimePeriodObject = {this.state.activeTimePeriodObject} 
+                onClose = {() => this.setState({activeIntentionObject: false})} 
+              />
             )}
 
-            {/* to show one of the three create intention popups */}
             {this.state.isCreating && this.state.activeTimePeriodObject.key === timePeriodObject.key && (
-              <CreateIntentionPopup createIntention = {this.createIntention} onClose = {() => this.setState({isCreating: false})} timePeriodObject = {timePeriodObject}/> 
+              <CreateIntentionPopup 
+                createIntention = {this.createIntention} 
+                onClose = {() => this.setState({isCreating: false})} 
+                timePeriodObject = {timePeriodObject}
+              /> 
             )}
-
           </View>
-
         ))}
-
       </View>
     );
   }
@@ -193,15 +173,13 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     borderRadius: 10,
     borderColor: 'gray',
-    // marginLeft: 25
   },
 
   intentionTitleBox: {
     paddingLeft: 75, 
     paddingTop: 10
   }
-
-})
+});
 
 
 
